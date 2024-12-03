@@ -51,7 +51,15 @@ function helmTemplate {
     if [ -n "$CHART_VALUES" ]; then
       echo "helm template --values $CHART_VALUES $CHART_LOCATION"
       printStepExecutionDelimeter
-      helm template --values "$CHART_VALUES" "$CHART_LOCATION"
+
+      VALUE_ARGS=""
+      IFS=';'
+      for value in "${CHART_VALUES[@]}"; do
+        VALUE_ARGS+="--values ${value} "
+      done
+      IFS=' '
+
+      helm template "${VALUE_ARGS[@]}" "$CHART_LOCATION"
       HELM_TEMPLATE_EXIT_CODE=$?
       printStepExecutionDelimeter
       if [ $HELM_TEMPLATE_EXIT_CODE -eq 0 ]; then
